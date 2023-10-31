@@ -4,6 +4,7 @@
 |      I'm going to make this short and simple. This program encodes and       |
 |       decodes files, but not text. Text will be added in the future. I       |
 |          am also looking to make this cross-platform in the future.          |
+|  P.S. This is a remake of the old version with DLL files. Check alpha 1.0.0  |
 |                                                                              |
 |----------------------------------< Usage >-----------------------------------|
 |                                                                              |
@@ -21,8 +22,8 @@
 |                                                                              |
 | --output-file OUTPUT_FILE      Where the program outputs encoded text.       |
 |                                                                              |
-|       PS - Make sure you use codex-method, input-file, and output-file       |
-|                 together, or you will get an error on start.                 |
+|        NEW - If you only use --codex-method, then you can enter text         |
+|        in the program, and it will return your encoded/decoded text.         |
 |                                                                              |
 |-------------------------------< ERR Messages >-------------------------------|
 |                                                                              |
@@ -32,44 +33,28 @@
 | - ERR: Input directory not found. # The program couldn't find the path       |
 | - ERR: Codex not available. # You entered a codex not supported (Not a DLL)  |
 | - ERR: Invalid Function call. # You didn't enter encode or decode            |
-| - DLL loading error: <exception> # The DLL file isn't formatted correctly.   |
+| - Module could not be imported. # You didn't enter a valid module/file name  |
+| - An error occurred: <exception> # There is an error inside the py file.     |
 |                                                                              |
 |--------------------------< Developing (DEVS ONLY) >--------------------------|
-|                                                                              |
-|   This project was coded with Python. The problem is, python doesn't have    |
-|    native DLL support, so the DLL codex files have to be made with C/C++.    |
-|     I will supply templates for DLL files below if you want to make your     |
-|           own codex/encoding method. Compilations for MinGW below:           |
-|                                                                              |
-|  MinGW GCC - gcc -shared -o <filename>.dll -Wall -Werror -fpic <filename>.c  |
-| MinGW G++ - g++ -shared -o <filename>.dll -Wall -Werror -fpic <filename>.cpp |
+|   My goal here was to add cross platform support. This can really only be    |
+|  achieved using .py files. The problem is module support. I have added some  |
+|  hidden modules and a template for you to use if you'd like. The program is  | 
+|     meant to not require python to run, so if you need extra libraries,      |
+|              you can compile the source code yourself, or add a              |
+|                 suggestion in github. Hidden Imports below:                  |
+|                 cryptography, base64, hmac, secrets, hashlib                 |
 |______________________________________________________________________________|
-<=>-<=>-<=>-<=>-<=>-<=>-<=>-<=>-<> C Template <>-<=>-<=>-<=>-<=>-<=>-<=>-<=>-<=>
+<=>-<=>-<=>-<=>-<=>-<=>-<=>-<=> Python3 Template <=>-<=>-<=>-<=>-<=>-<=>-<=>-<=>
 
-char* encode(const char* input) {
-    // Code goes here
-    char* output;
-    return output;
-}
-char* decode(const char *input) {
-    // Code goes here
-    char* output;
-    return output;
-}
-
-<>-<=>-<=>-<=>-<=>-<=>-<=>-<=>-<> C++ Template <>-<=>-<=>-<=>-<=>-<=>-<=>-<=>-<>
-
-extern "C" {
-    __declspec(dllexport) const char* encode(const char* input) {
-        // Code goes here
-        string output;
-        return output.c_str();
-    }
-    __declspec(dllexport) const char* decode(const char* input) {
-        // Code goes here
-        string output;
-        return output.c_str();
-    }
-}
+def encode(input): 
+    output = <encoded input>
+    return output
+                            # Takes a string, returns a string
+def decode(input):
+    output = <decoded input>
+    return output
 
 <>-<=>-<=>-<=>-<=>-<=>-<=>-<=>-<=>-<=>-<>-<=>-<=>-<=>-<=>-<=>-<=>-<=>-<=>-<=>-<>
+
+                   Made by Aydon Fauscett [October 29th, 2023]
