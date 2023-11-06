@@ -40,9 +40,12 @@ def module_import(module_path):
 def directory_list(directory):
     """-<List files in a given directory>-"""
     file_list = []
-    for root, dirs, files in os.walk(directory):
-        for file in files:
-            file_list.append(os.path.join(root, file))
+    if os.path.isfile(directory):
+        file_list.append(directory)
+    else:
+        for root, dirs, files in os.walk(directory):
+            for file in files:
+                file_list.append(os.path.join(root, file))
     return file_list
 
 def remove_quotes(path):
@@ -60,11 +63,13 @@ def main():
         input_text = True
         content = str(input("Enter text:\n"))
     else:
+        input_dir = args.input_file
+        output_dir = args.output_file
         og_files = directory_list(remove_quotes(input_dir))
     
     # Additional ERR checking
     
-    print() # This isn't random. It adds a seperator to the command
+    print() # This isn't random. It adds a seperator line to the command
     
     is_error = False
     is_codex = False
@@ -121,18 +126,49 @@ def main():
             content = module.decode(content)
     else:
         for file_name in og_files:
-            os.makedirs(os.path.dirname(os.path.join(output_dir, os.path.relpath(file_name, input_dir))), exist_ok=True)
-            
-            with open(file_name, 'r') as file:
-                content = file.read() # Reading file as content
-            
-            if args.codex_method.split('.', 1)[1] == "encode":
-                content = module.encode(content)
+            # Check if both input and output are files
+            if os.path.isfile(input_dir) and os.path.isfile(output_dir):
+                with open(file_name, 'r') as file:
+                    content = file.read()  # Reading file as content
+
+                if args.codex_method.split('.', 1)[1] == "encode":
+                    content = module.encode(content)
+                else:
+                    content = module.decode(content)
+
+                with open(output_dir, 'w') as file:
+                    file.write(content)  # Writing content to the output file
+            # Check if the input is a file and the output is a directory
+            elif os.path.isfile(input_dir) and os.path.isdir(output_dir):
+                # Handle the case where the input is a file, and the output is a directory
+                os.makedirs(output_dir, exist_ok=True)
+                output_file_path = os.path.join(output_dir, os.path.basename(file_name))  # Use the original file name
+
+                with open(file_name, 'r') as file:
+                    content = file.read()  # Reading file as content
+
+                if args.codex_method.split('.', 1)[1] == "encode":
+                    content = module.encode(content)
+                else:
+                    content = module.decode(content)
+
+                with open(output_file_path, 'w') as file:
+                    file.write(content)  # Writing content to a new file
             else:
-                content = module.decode(content)
-            
-            with open(os.path.join(output_dir, os.path.relpath(file_name, input_dir)), 'w') as file:
-                file.write(content) # Writing content to new file
+                # Handle the case where both input and output are directories
+                if os.path.isdir(input_dir) and os.path.isdir(output_dir):
+                    os.makedirs(os.path.join(output_dir, os.path.dirname(os.path.relpath(file_name, input_dir))), exist_ok=True)
+
+                with open(file_name, 'r') as file:
+                    content = file.read()  # Reading file as content
+
+                if args.codex_method.split('.', 1)[1] == "encode":
+                    content = module.encode(content)
+                else:
+                    content = module.decode(content)
+
+                with open(os.path.join(output_dir, os.path.relpath(file_name, input_dir)), 'w') as file:
+                    file.write(content)
         
     # End time
     

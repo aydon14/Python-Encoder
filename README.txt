@@ -1,10 +1,12 @@
  ______________________________________________________________________________
 |                            Python Encoder/Decoder                            |
 |                                                                              |
-|      I'm going to make this short and simple. This program encodes and       |
-|       decodes files, but not text. Text will be added in the future. I       |
-|          am also looking to make this cross-platform in the future.          |
-|  P.S. This is a remake of the old version with DLL files. Check alpha 1.0.0  |
+|--------------------------------<Installation>--------------------------------|
+|                                                                              |
+| 1. Download release: https://github.com/aydon14/Python-Encoder/releases      |
+| 2. Extract files into any folder (Portable installation)                     |
+| 3. Go to source code: https://github.com/aydon14/Python-Encoder              |
+| 4. Download selected codecs, and paste codecs into 'codex' folder            |
 |                                                                              |
 |----------------------------------< Usage >-----------------------------------|
 |                                                                              |
@@ -37,15 +39,13 @@
 | - An error occurred: <exception> # There is an error inside the py file.     |
 |                                                                              |
 |--------------------------< Developing (DEVS ONLY) >--------------------------|
-|   My goal here was to add cross platform support. This can really only be    |
-|  achieved using .py files. The problem is module support. I have added some  |
-|  hidden modules and a template for you to use if you'd like. The program is  | 
-|     meant to not require python to run, so if you need extra libraries,      |
-|              you can compile the source code yourself, or add a              |
+|   I have added some hidden modules and a template for you to use if you'd    |
+|   like. The program is meant to not require python to run, so if you need    |
+|     extra libraries, you can compile the source code yourself, or add a      |
 |                 suggestion in github. Hidden Imports below:                  |
 |                 cryptography, base64, hmac, secrets, hashlib                 |
 |______________________________________________________________________________|
-<=>-<=>-<=>-<=>-<=>-<=>-<=>-<=> Python3 Template <=>-<=>-<=>-<=>-<=>-<=>-<=>-<=>
++-----------------------------< Python3 Template >-----------------------------+
 
 def encode(input): 
     output = <encoded input>
@@ -55,6 +55,7 @@ def decode(input):
     output = <decoded input>
     return output
 
-<>-<=>-<=>-<=>-<=>-<=>-<=>-<=>-<=>-<=>-<>-<=>-<=>-<=>-<=>-<=>-<=>-<=>-<=>-<=>-<>
-
-                   Made by Aydon Fauscett [October 29th, 2023]
+_______________________________________________________________________________
+\/\ \/\ \/\ \/\ \/                                             \ \/\ \/\ \/\ \/\
+/ /\/ /\/ /\/ /\/ Made by Aydon Fauscett  [November 5th, 2023] /\/ /\/ /\/ /\/ /
+\/\ \/\ \/\ \/\ \_____________________________________________/\ \/\ \/\ \/\ \/\
