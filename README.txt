@@ -3,29 +3,24 @@
 |                                                                              |
 |--------------------------------<Installation>--------------------------------|
 |                                                                              |
-| 1. Download release: https://github.com/aydon14/Python-Encoder/releases      |
-| 2. Extract files into any folder (Portable installation)                     |
-| 3. Go to source code: https://github.com/aydon14/Python-Encoder              |
-| 4. Download selected codecs, and paste codecs into 'codex' folder            |
+| 1.  Download release: https://github.com/aydon14/Python-Encoder/releases     |
+| 2.  Extract files into any folder (Portable installation)                    |
+| 3.  Go to source code: https://github.com/aydon14/Python-Encoder             |
+| 4.  Download selected codecs, and paste codecs into 'codec' folder           |
 |                                                                              |
 |----------------------------------< Usage >-----------------------------------|
 |                                                                              |
-| -h, --help                     Lists commands like you see now.              |
+| -h, --help                     Displays options and arguments.               |
 |                                                                              |
-| --list-methods                 Lists codex methods. (DLL files in codex)     |
+| --list-codecs                  Lists codex methods. (py files in codec)      |
 |                                                                              |
-| --codex-method CODEX_METHOD    Chooses the DLL file & codex function.        |
-|                                Formatted as <codex>.<function>               |
-|                                Codex - encoding method                       |
-|                                Function - encode or decode                   |
-|                                Example: base64.encode                        |
+| --codec CODEC.METHOD           The codec and function you want to use.       |
 |                                                                              |
-| --input-file INPUT_FILE        Input file that the program reads to encode.  |
+| --input FILE/FOLDER            Input file that the program reads to encode.  |
 |                                                                              |
-| --output-file OUTPUT_FILE      Where the program outputs encoded text.       |
+| --output FILE/FOLDER           Where the program outputs encoded text.       |
 |                                                                              |
-|        NEW - If you only use --codex-method, then you can enter text         |
-|        in the program, and it will return your encoded/decoded text.         |
+|          P.S. --input and --output are for files/folders, not text.          |
 |                                                                              |
 |-------------------------------< ERR Messages >-------------------------------|
 |                                                                              |
@@ -33,7 +28,7 @@
 |         I tried to make them as clear as possible. Possible messages:        |
 |                                                                              |
 | - ERR: Input directory not found. # The program couldn't find the path       |
-| - ERR: Codex not available. # You entered a codex not supported (Not a DLL)  |
+| - ERR: Codec not available. # You entered a codec not supported (Not a file) |
 | - ERR: Invalid Function call. # You didn't enter encode or decode            |
 | - Module could not be imported. # You didn't enter a valid module/file name  |
 | - An error occurred: <exception> # There is an error inside the py file.     |
@@ -43,7 +38,7 @@
 |   like. The program is meant to not require python to run, so if you need    |
 |     extra libraries, you can compile the source code yourself, or add a      |
 |                 suggestion in github. Hidden Imports below:                  |
-|                 cryptography, base64, hmac, secrets, hashlib                 |
+|         cryptography, base64, hmac, secrets, hashlib, random, struct         |
 |______________________________________________________________________________|
 +-----------------------------< Python3 Template >-----------------------------+
 
@@ -57,5 +52,5 @@ def decode(input):
 
 _______________________________________________________________________________
 \/\ \/\ \/\ \/\ \/                                             \ \/\ \/\ \/\ \/\
-/ /\/ /\/ /\/ /\/ Made by Aydon Fauscett  [November 5th, 2023] /\/ /\/ /\/ /\/ /
+/ /\/ /\/ /\/ /\/ Made by Aydon Fauscett [November 13th, 2023] /\/ /\/ /\/ /\/ /
 \/\ \/\ \/\ \/\ \_____________________________________________/\ \/\ \/\ \/\ \/\
