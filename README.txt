@@ -6,7 +6,7 @@
 | 1.  Download release: https://github.com/aydon14/Python-Encoder/releases     |
 | 2.  Extract files into any folder (Portable installation)                    |
 | 3.  Go to source code: https://github.com/aydon14/Python-Encoder             |
-| 4.  Download selected codecs, and paste codecs into 'codec' folder           |
+| 4.  Download codecs from 'Packs/type', and paste codecs into 'codec' folder  |
 |                                                                              |
 |----------------------------------< Usage >-----------------------------------|
 |                                                                              |
