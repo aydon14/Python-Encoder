@@ -3,34 +3,40 @@
 
 alphabet = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz!#$%&()*+-;<=>?@^_`{|}~"
 
-def encode(input):
-    data = input.encode('utf-8')
-    result = ""
-    data_len = len(data)
+encrypt_args = {
+    'input': ['any']
+}
+
+decrypt_args = {
+    'input': ['any']
+}
+
+def encrypt(input_bytes):
+    result = bytearray()
+    data_len = len(input_bytes)
 
     i = 0
     while i < data_len:
-        chunk = data[i:i+4]
+        chunk = input_bytes[i:i+4]
         i += 4
 
         value = 0
         for j, byte in enumerate(chunk):
             value |= byte << (8 * (3 - j))
 
-        encoded = ""
+        encoded = bytearray()
         for _ in range(5):
-            encoded = alphabet[value % 85] + encoded
+            encoded.insert(0, alphabet[value % 85])
             value //= 85
 
         result += encoded
 
-    # Remove padding if data length is not a multiple of 4
     if data_len % 4 != 0:
         result = result[:-(4 - data_len % 4)]
 
-    return result
+    return bytes(result)
 
-def decode(encoded_input):
+def decrypt(encoded_input):
     data_len = len(encoded_input)
     result = bytearray()
 
@@ -39,13 +45,12 @@ def decode(encoded_input):
         chunk = encoded_input[i:i+5]
         i += 5
 
-        # Handle the special case of 'u' (exclamation point)
-        if 'u' in chunk:
-            chunk = chunk.replace('u', '!')
+        if b'u' in chunk:
+            chunk = chunk.replace(b'u', b'!')
 
         value = 0
         for j, char in enumerate(chunk):
-            index = alphabet.index(char)
+            index = alphabet.index(chr(char))
             value = value * 85 + index
 
         decoded = bytearray()
@@ -55,12 +60,10 @@ def decode(encoded_input):
 
         result += decoded
 
-    # Remove padding if data length is not a multiple of 5
     if data_len % 5 != 0:
         result = result[:-(5 - data_len % 5)]
 
-    # Replace the last byte if it's 0x00 with '!'
     if result and result[-1] == 0x00:
         result[-1] = ord('!')
 
-    return result.decode('utf-8')
+    return bytes(result)

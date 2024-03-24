@@ -5,22 +5,33 @@
 |                                                                              |
 | 1.  Download release: https://github.com/aydon14/Python-Encoder/releases     |
 | 2.  Extract files into any folder (Portable installation)                    |
-| 3.  Go to source code: https://github.com/aydon14/Python-Encoder             |
-| 4.  Download codecs from 'Packs/type', and paste codecs into 'codec' folder  |
+| 3.  You do NOT need to install python for this to work. (Windows only)       |
 |                                                                              |
 |----------------------------------< Usage >-----------------------------------|
 |                                                                              |
-| -h, --help                     Displays options and arguments.               |
+| The program can encrypt files AND folders with a given codec. The codecs are |
+|    meant to be dynamic, so you can add or remove ones you don't need. All    |
+|  codecs are in the codec folder. Do NOT remove '_internal' in your release   |
+|  folder, or else the program might not work. The program may require admin   |
+|   priveleges in order to edit system files that require extra permission.    |
+|    You aren't required to enter files, if you want, you can enter text to    |
+|             encrypt. That's all. Internet privacy rules! - Aydon             |
 |                                                                              |
-| --list-codecs                  Lists codex methods. (py files in codec)      |
+|--------------------------------< Arguments >---------------------------------|
 |                                                                              |
-| --codec CODEC.METHOD           The codec and function you want to use.       |
+| -h, --help                    Displays options and arguments.                |
 |                                                                              |
-| --input FILE/FOLDER            Input file that the program reads to encode.  |
+| -list-codecs                  Lists available codecs. (py files in codec)    |
 |                                                                              |
-| --output FILE/FOLDER           Where the program outputs encoded text.       |
+| -codec CODEC.METHOD           The codec and function you want to use.        |
+|                               Note: -h says to use encode/decode, but        |
+|                               use encrypt/decrypt instead.                   |
 |                                                                              |
-|          P.S. --input and --output are for files/folders, not text.          |
+| -in-dir FILE/FOLDER           Input file that the program reads to encrypt.  |
+|                                                                              |
+| -out-dir FILE/FOLDER          Where the program outputs encrypted text.      |
+|                                                                              |
+|   Note: You can manually enter text if you don't use -in-dir and -out-dir.   |
 |                                                                              |
 |-------------------------------< ERR Messages >-------------------------------|
 |                                                                              |
@@ -33,24 +44,12 @@
 | - Module could not be imported. # You didn't enter a valid module/file name  |
 | - An error occurred: <exception> # There is an error inside the py file.     |
 |                                                                              |
-|--------------------------< Developing (DEVS ONLY) >--------------------------|
-|   I have added some hidden modules and a template for you to use if you'd    |
-|   like. The program is meant to not require python to run, so if you need    |
-|     extra libraries, you can compile the source code yourself, or add a      |
-|                 suggestion in github. Hidden Imports below:                  |
-|         cryptography, base64, hmac, secrets, hashlib, random, struct         |
+|              Note: Errors are depricated and may have changed.               |
+|                                                                              |
+|>----------------------------------------------------------------------------<|
+|                                                                              |
+|              DEVS: Download the developer zip to for more info.              |
 |______________________________________________________________________________|
-+-----------------------------< Python3 Template >-----------------------------+
-
-def encode(input): 
-    output = <encoded input>
-    return output
-                            # Takes a string, returns a string
-def decode(input):
-    output = <decoded input>
-    return output
-
-_______________________________________________________________________________
-\/\ \/\ \/\ \/\ \/                                             \ \/\ \/\ \/\ \/\
-/ /\/ /\/ /\/ /\/ Made by Aydon Fauscett [November 13th, 2023] /\/ /\/ /\/ /\/ /
-\/\ \/\ \/\ \/\ \_____________________________________________/\ \/\ \/\ \/\ \/\
+\/\ \/\ \/\ \/\ \/                                              \ \/\ \/\ \/\ \/\
+/ /\/ /\/ /\/ /\/    Made by Aydon Fauscett [March 23, 2023]    /\/ /\/ /\/ /\/ /
+\/\ \/\ \/\ \/\ \______________________________________________/\ \/\ \/\ \/\ \/\

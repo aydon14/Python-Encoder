@@ -1,14 +1,22 @@
 # These functions are inspired by Adrien Beraud
 # https://github.com/aberaud/base91-python
 
-base91_alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!#$%&()*+,./:;<=>?@[]^_`{|}~"'
+alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!#$%&()*+,./:;<=>?@[]^_`{|}~"'
 
-def decode(input):
-    table = {char: index for index, char in enumerate(base91_alphabet)}
+encrypt_args = {
+    'input': ['any']
+}
+
+decrypt_args = {
+    'input': ['any']
+}
+
+def decrypt(input_bytes):
+    table = {char: index for index, char in enumerate(alphabet)}
     value, buffer, bits_count, output = -1, 0, 0, bytearray()
 
-    for char in input:
-        character = table[char]
+    for byte in input_bytes:
+        character = table[chr(byte)]
         if value < 0:
             value = character
         else:
@@ -24,13 +32,12 @@ def decode(input):
     if value + 1:
         output.append((buffer | value << bits_count) & 255)
 
-    return bytes(output).decode("utf-8")
+    return bytes(output)
 
-def encode(input):
-    utf_input = input.encode("utf-8")
+def encrypt(input_bytes):
     buffer, bits_count, output = 0, 0, []
 
-    for byte in utf_input:
+    for byte in input_bytes:
         buffer |= byte << bits_count
         bits_count += 8
         while bits_count >= 13:
@@ -38,12 +45,12 @@ def encode(input):
             shift = 13 if value > 88 else 14
             buffer, bits_count = (buffer >> shift, 
                                   bits_count - shift)
-            output.extend(map(ord, [base91_alphabet[value % 91], 
-                                    base91_alphabet[value // 91]]))
+            output.extend(map(ord, [alphabet[value % 91], 
+                                    alphabet[value // 91]]))
 
     if bits_count:
-        output.extend(map(ord, [base91_alphabet[buffer % 91]]
-                          + ([base91_alphabet[buffer // 91]] 
+        output.extend(map(ord, [alphabet[buffer % 91]]
+                          + ([alphabet[buffer // 91]] 
                              if bits_count > 7 or buffer > 90 else [])))
 
-    return ''.join(map(chr, output))
+    return bytes(output)
