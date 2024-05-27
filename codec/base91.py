@@ -4,11 +4,13 @@
 alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!#$%&()*+,./:;<=>?@[]^_`{|}~"'
 
 encrypt_args = {
-    'input': ['any']
+    'input': None,
+    'IE': True
 }
 
 decrypt_args = {
-    'input': ['any']
+    'input': None,
+    'IE': True
 }
 
 def decrypt(input_bytes):

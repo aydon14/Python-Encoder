@@ -1,11 +1,11 @@
 alphabet = "!\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstu"
 
 encrypt_args = {
-    'input': ['any']
+    'input': None,
 }
 
 decrypt_args = {
-    'input': ['any']
+    'input': None,
 }
 
 def encrypt(input_bytes):

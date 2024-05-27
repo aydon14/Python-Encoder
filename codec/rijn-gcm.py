@@ -109,7 +109,7 @@ def encrypt_block(block, key, Nr):
 
     return bytes(sum(state, []))
 
-def aes_encrypt(plaintext, key, iv):
+def ecb_encrypt(plaintext, key):
     Nr = 0
     if len(key) == 16:
         Nr = 10
@@ -119,80 +119,123 @@ def aes_encrypt(plaintext, key, iv):
         Nr = 14
     expanded_key = key_expansion(key, Nr)
     ciphertext = b''
-    block_count = len(plaintext) // block_size
+    blocks = [plaintext[i:i+block_size] for i in range(0, len(plaintext), block_size)]
 
-    for i in range(block_count):
-        iv_state = [list(iv[i:i+4]) for i in range(0, len(iv), 4)]
-        encrypted_iv = encrypt_block(iv_state, expanded_key, Nr)
-        ciphertext_block = bytes(a ^ b for a, b in zip(plaintext[i*block_size:(i+1)*block_size], encrypted_iv))
-        ciphertext += ciphertext_block
-        iv = encrypted_iv
+    for block in blocks:
 
-    if len(plaintext) % block_size != 0:
-        iv_state = [list(iv[i:i+4]) for i in range(0, len(iv), 4)]
-        encrypted_iv = encrypt_block(iv_state, expanded_key, Nr)
-        ciphertext_block = bytes(a ^ b for a, b in zip(plaintext[block_count*block_size:], 
-                                                       encrypted_iv[:len(plaintext) % block_size]))
-        ciphertext += ciphertext_block
+        state = [list(block[i:i+4]) for i in range(0, len(block), 4)]
+        encrypted_block = encrypt_block(state, expanded_key, Nr)
+        ciphertext += encrypted_block
 
     return ciphertext
 
-def aes_decrypt(ciphertext, key, iv):
-    Nr = 0
-    if len(key) == 16:
-        Nr = 10
-    elif len(key) == 24:
-        Nr = 12
-    elif len(key) == 32:
-        Nr = 14
-    expanded_key = key_expansion(key, Nr)
-    plaintext = b''
-    block_count = len(ciphertext) // block_size
+def inc32(counter_block):
+    counter = int.from_bytes(counter_block, 'big')
+    counter += 1
+    return counter.to_bytes(16, 'big')
 
-    for i in range(block_count):
-        iv_state = [list(iv[i:i+4]) for i in range(0, len(iv), 4)]
-        encrypted_iv = encrypt_block(iv_state, expanded_key, Nr)
-        decrypted_block = bytes(a ^ b for a, b in zip(ciphertext[i*block_size:(i+1)*block_size], encrypted_iv))
-        plaintext += decrypted_block
-        iv = encrypted_iv
+def gctr(icb, X, key):
+    n = ((len(X) + 15) // 16) + 1
+    if len(X) % 16 != 0:
+        n = n - 1
+    blocks = [X[i:i+block_size] for i in range(0, len(X), block_size)]
 
-    if len(ciphertext) % block_size != 0:
-        iv_state = [list(iv[i:i+4]) for i in range(0, len(iv), 4)]
-        encrypted_iv = encrypt_block(iv_state, expanded_key, Nr)
-        decrypted_block = bytes(a ^ b for a, b in zip(ciphertext[block_count*block_size:], 
-                                                      encrypted_iv[:len(ciphertext) % block_size]))
-        plaintext += decrypted_block
+    CB = icb
+    Y = b''
 
-    return plaintext
+    for i in range(1, n):
+        CB = inc32(CB)
+        encrypted_block = ecb_encrypt(CB, key)
+        Y += bytes(a ^ b for a, b in zip(encrypted_block, blocks[i-1]))
+
+    last_block = blocks[-1]
+    msb_len_x_n = len(last_block) % block_size
+    CB_last = inc32(CB)
+    encrypted_last_block = ecb_encrypt(CB_last, key)[:msb_len_x_n]
+    Y += bytes(a ^ b for a, b in zip(encrypted_last_block, last_block))
+
+    return Y
+
+def gf128_mul(x, y):
+    y = int.from_bytes(y, 'big')
+
+    z = 0
+    for i in range(127, -1, -1):
+        z ^= x * ((y >> i) & 1)
+        x = (x >> 1) ^ ((x & 1) * 0xE1000000000000000000000000000000)
+
+    return z
+
+def ghash(H, A, C):
+    input_data = A
+    if len(A) % 16 != 0:
+        input_data += b'\x00' * (16 - len(A) % 16)
+    input_data += C
+    if len(C) % 16 != 0:
+        input_data += b'\x00' * (16 - len(C) % 16)
+    
+    input_data += (len(A) * 8).to_bytes(8, 'big') + (len(C) * 8).to_bytes(8, 'big')
+    Y = 0
+    blocks = [input_data[i:i + block_size] for i in range(0, len(input_data), block_size)]
+
+    for block in blocks:
+        X_i = int.from_bytes(block, byteorder='big')
+        Y ^= X_i
+        Y = gf128_mul(Y, H)
+
+    return Y.to_bytes(16, byteorder='big')
 
 encrypt_args = {
     'input': None,
     'key': [16, 24, 32],
     'iv': [16],
-    'IE': True
+    'ad': None,
+    'IE': False
 }
 
 decrypt_args = {
     'input': None,
     'key': [16, 24, 32],
     'iv': [16],
-    'IE': True
+    'ad': None,
+    'tag': [32],
+    'IE': False
 }
 
 block_size = 16
 
-def encrypt(input, key, iv):
+def encrypt(plaintext, key, iv, ad):
     key = key.encode('utf-8')
     iv = iv.encode('utf-8')
+    ad = ad.encode('utf-8')
+    H = ecb_encrypt(b"\x00" * 16, key)
+    if len(iv) == 12:
+        J_0 = iv + b"\x00\x00\x00\x01"
+    else:
+        J_0 = ghash(H, b'', iv)
+
+    ciphertext = gctr(J_0, plaintext, key)
+    tag = (bytes(a ^ b for a, b in zip(ghash(H, ad, ciphertext), ecb_encrypt(J_0, key)))).hex()
     
-    output = aes_encrypt(input, key, iv)
-    
-    return output
-    
-def decrypt(input, key, iv):
+    return ciphertext, tag
+
+def decrypt(ciphertext, key, iv, ad, tag):
     key = key.encode('utf-8')
     iv = iv.encode('utf-8')
+    ad = ad.encode('utf-8')
+    tag = bytes.fromhex(tag)
+    H = ecb_encrypt(b"\x00" * 16, key)
+    if len(iv) == 12:
+        J_0 = iv + b"\x00\x00\x00\x01"
+    else:
+        J_0 = ghash(H, b'', iv)
+
+    decrypted_tag = bytes(a ^ b for a, b in zip(ghash(H, ad, ciphertext), ecb_encrypt(J_0, key)))
+
+    plaintext = gctr(J_0, ciphertext, key)
     
-    output = aes_decrypt(input, key, iv)
-    
-    return output
+    if decrypted_tag != tag:
+        warning = "Tag authentication failed. Data may be corrupt or tampered with."
+        return plaintext, warning
+
+    return plaintext

@@ -130,7 +130,6 @@ def aes_encrypt(plaintext, key, nonce):
     elif len(key) == 32:
         Nr = 14
     expanded_key = key_expansion(key, Nr)
-    block_size = 16
     ciphertext = b''
     blocks = [plaintext[i:i+block_size] for i in range(0, len(plaintext), block_size)]
 
@@ -138,10 +137,6 @@ def aes_encrypt(plaintext, key, nonce):
         counter_block = nonce + i.to_bytes(8, 'big')
         state = [list(counter_block[i:i+4]) for i in range(0, len(counter_block), 4)]
         encrypted_counter = encrypt_block(state, expanded_key, Nr)
-
-        if len(block) < block_size:
-            block = pad(block, block_size)
-
         encrypted_block = bytes(a ^ b for a, b in zip(encrypted_counter, block))
         ciphertext += encrypted_block
 
@@ -156,7 +151,6 @@ def aes_decrypt(ciphertext, key, nonce):
     elif len(key) == 32:
         Nr = 14
     expanded_key = key_expansion(key, Nr)
-    block_size = 16
     plaintext = b''
     blocks = [ciphertext[i:i+block_size] for i in range(0, len(ciphertext), block_size)]
 
@@ -164,24 +158,26 @@ def aes_decrypt(ciphertext, key, nonce):
         counter_block = nonce + i.to_bytes(8, 'big')
         state = [list(counter_block[i:i+4]) for i in range(0, len(counter_block), 4)]
         encrypted_counter = encrypt_block(state, expanded_key, Nr)
-
         decrypted_block = bytes(a ^ b for a, b in zip(encrypted_counter, block))
         plaintext += decrypted_block
 
-    plaintext = unpad(plaintext)
     return plaintext
 
 encrypt_args = {
-    'input': ['any'],
+    'input': None,
     'key': [16, 24, 32],
-    'iv': [16]
+    'iv': [16],
+    'IE': True
 }
 
 decrypt_args = {
-    'input': ['any'],
+    'input': None,
     'key': [16, 24, 32],
-    'iv': [16]
+    'iv': [16],
+    'IE': True
 }
+
+block_size = 16
 
 def encrypt(input, key, iv):
     key = key.encode('utf-8')

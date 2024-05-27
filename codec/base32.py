@@ -1,11 +1,13 @@
 alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567"
 
 encrypt_args = {
-    'input': ['any']
+    'input': None,
+    'IE': True
 }
 
 decrypt_args = {
-    'input': ['any']
+    'input': None,
+    'IE': True
 }
 
 def encrypt(input_bytes):

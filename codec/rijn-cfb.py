@@ -93,18 +93,6 @@ def add_round_key(state, round_key):
 
     return state
 
-def pad(data, block_size):
-    pad_len = block_size - len(data) % block_size
-    padding = bytes([pad_len]) * pad_len
-    return data + padding
-
-def unpad(padded_data):
-    pad_len = padded_data[-1]
-    if pad_len < len(padded_data):
-        return padded_data[:-pad_len]
-    else:
-        return padded_data
-
 def encrypt_block(block, key, Nr):
     state = block[:]
     state = add_round_key(state, key[:4])
@@ -130,15 +118,12 @@ def aes_encrypt(plaintext, key, iv):
     elif len(key) == 32:
         Nr = 14
     expanded_key = key_expansion(key, Nr)
-    block_size = 16
     ciphertext = b''
+    block_size = 16
     previous_block = iv
 
     for i in range(0, len(plaintext), block_size):
         block = plaintext[i:i + block_size]
-        if len(block) < block_size:
-            block = pad(block, block_size)
-
         state = [list(previous_block[i:i + 4]) for i in range(0, len(previous_block), 4)]
         encrypted_block = encrypt_block(state, expanded_key, Nr)
         ciphertext_block = bytes(a ^ b for a, b in zip(encrypted_block, block))
@@ -156,8 +141,8 @@ def aes_decrypt(ciphertext, key, iv):
     elif len(key) == 32:
         Nr = 14
     expanded_key = key_expansion(key, Nr)
-    block_size = 16
     plaintext = b''
+    block_size = 16
     previous_block = iv
 
     for i in range(0, len(ciphertext), block_size):
@@ -168,19 +153,20 @@ def aes_decrypt(ciphertext, key, iv):
         plaintext += decrypted_block
         previous_block = block
 
-    plaintext = unpad(plaintext)
     return plaintext
 
 encrypt_args = {
-    'input': ['any'],
+    'input': None,
     'key': [16, 24, 32],
-    'iv': [16]
+    'iv': [16],
+    'IE': True
 }
 
 decrypt_args = {
-    'input': ['any'],
+    'input': None,
     'key': [16, 24, 32],
-    'iv': [16]
+    'iv': [16],
+    'IE': True
 }
 
 def encrypt(input, key, iv):
